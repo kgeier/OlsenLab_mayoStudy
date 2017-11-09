@@ -1,0 +1,145 @@
+---
+title: "Graphs of ROI data"
+output: html_notebook
+---
+
+This is the code to load in and graph the ROI data of the 24 subjects. 
+
+
+```{r}
+ROIdata <- fread("C:/Users/kgeier/Desktop/mayo/ROI data/AllContrasts_ROIs.csv")
+
+```
+
+Changing names of columns to be easier to read on graph
+```{r}
+colnames(ROIdata) <- c("SID", "Contrast", "R_MD", "L_MD", "R_Ant","L_Ant", "R_hipp", "L_hipp", "R_Fusi", "L_Fusi")
+```
+
+
+
+Finding average between left and right sides to make it less busy
+```{r}
+ROIdata$MD <-(ROIdata$L_MD + ROIdata$R_MD)/2 
+ROIdata$Ant <-(ROIdata$L_Ant + ROIdata$R_Ant)/2 
+ROIdata$Hipp <-(ROIdata$L_hipp + ROIdata$R_hipp)/2 
+ROIdata$Fusi <-(ROIdata$L_Fusi + ROIdata$R_Fusi)/2 
+```
+
+
+
+
+
+Version with Left and Right averaged. 
+```{r}
+ROIdata %>%
+  gather(c(`MD`:`Fusi`), key = "Name_of_ROI", value = "Tvalue") %>%
+  group_by(Contrast) %>%
+  #filter(!is.na(risk_carrier)) %>%
+  ggplot(aes(y = Tvalue, x = Name_of_ROI, color = SID)) + 
+  geom_boxplot() +
+  #geom_point() +
+  #geom_smooth(method = 'lm')+ 
+  scale_x_discrete(limits=c("Ant","MD", "Hipp", "Fusi")) +
+  facet_wrap(~Contrast, scales = 'free')+
+    xlab("Name of ROI") +
+    ylab("T Statistic")
+```
+
+Version with Left and Right split
+```{r}
+ROIdata %>%
+  gather(c(`R_MD`:`L_hipp`), key = "Name_of_ROI", value = "Tvalue") %>%
+  group_by(Contrast) %>%
+  #filter(!is.na(risk_carrier)) %>%
+  ggplot(aes(y = Tvalue, x = Name_of_ROI, color = SID)) + 
+  geom_boxplot() +
+  #geom_point() +
+  #geom_smooth(method = 'lm')+ 
+  scale_x_discrete(limits=c("R_Ant","L_Ant", "R_MD", "L_MD", "R_hipp", "L_hipp")) +
+  facet_wrap(~Contrast, scales = 'free')
+```
+
+```{r}
+ROI.s <- ROIdata[ROIdata$Contrast == 'Study_correct_vs_incorrect',]
+ROI.tc <- ROIdata[ROIdata$Contrast == 'TestCue_Correct_vs_Incorrect',]
+ROI.td <- ROIdata[ROIdata$Contrast == 'TestDelay_Correct_vs_Incorrect',]
+ROI.tp <- ROIdata[ROIdata$Contrast == 'TestProbe_Correct_vs_Incorrect',]
+```
+
+
+Just study CorInc - Version with Left and Right averaged. 
+```{r}
+ROI.s %>%
+  gather(c(`MD`:`Fusi`), key = "Name_of_ROI", value = "Tvalue") %>%
+  #group_by(Contrast) %>%
+  #filter(!is.na(risk_carrier)) %>%
+  ggplot(aes(y = Tvalue, x = Name_of_ROI, color = SID)) + 
+  geom_boxplot() +
+  #geom_point() +
+  #geom_smooth(method = 'lm')+ 
+  scale_x_discrete(limits=c("Ant","MD", "Hipp", "Fusi")) +
+  #facet_wrap(~Contrast, scales = 'free')+
+    xlab("Name of ROI") +
+    ylab("T Statistic") +
+  ggtitle("Study Correct > Incorrect") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+theme(text = element_text(size=44))
+```
+
+Just study CorInc - Version with Left and Right averaged. 
+```{r}
+ROI.tc %>%
+  gather(c(`MD`:`Fusi`), key = "Name_of_ROI", value = "Tvalue") %>%
+  #group_by(Contrast) %>%
+  #filter(!is.na(risk_carrier)) %>%
+  ggplot(aes(y = Tvalue, x = Name_of_ROI, color = SID)) + 
+  geom_boxplot() +
+  #geom_point() +
+  #geom_smooth(method = 'lm')+ 
+  scale_x_discrete(limits=c("Ant","MD", "Hipp", "Fusi")) +
+  #facet_wrap(~Contrast, scales = 'free')+
+    xlab("Name of ROI") +
+    ylab("T Statistic") +
+  ggtitle("Test Cue Correct > Incorrect") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(text = element_text(size=44))
+```
+
+Just study CorInc - Version with Left and Right averaged. 
+```{r}
+ROI.td %>%
+  gather(c(`MD`:`Fusi`), key = "Name_of_ROI", value = "Tvalue") %>%
+  #group_by(Contrast) %>%
+  #filter(!is.na(risk_carrier)) %>%
+  ggplot(aes(y = Tvalue, x = Name_of_ROI, color = SID)) + 
+  geom_boxplot() +
+  #geom_point() +
+  #geom_smooth(method = 'lm')+ 
+  scale_x_discrete(limits=c("Ant","MD", "Hipp", "Fusi")) +
+  #facet_wrap(~Contrast, scales = 'free')+
+    xlab("Name of ROI") +
+    ylab("T Statistic") +
+  ggtitle("Test Delay Correct > Incorrect") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+theme(text = element_text(size=44))
+```
+
+Just study CorInc - Version with Left and Right averaged. 
+```{r}
+ROI.tp %>%
+  gather(c(`MD`:`Fusi`), key = "Name_of_ROI", value = "Tvalue") %>%
+  #group_by(Contrast) %>%
+  #filter(!is.na(risk_carrier)) %>%
+  ggplot(aes(y = Tvalue, x = Name_of_ROI, color = SID)) + 
+  geom_boxplot() +
+  #geom_point() +
+  #geom_smooth(method = 'lm')+ 
+  scale_x_discrete(limits=c("Ant","MD", "Hipp", "Fusi")) +
+  #facet_wrap(~Contrast, scales = 'free')+
+    xlab("Name of ROI") +
+    ylab("T Statistic") +
+  ggtitle("Test Probe Correct > Incorrect") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+theme(text = element_text(size=44))
+```
